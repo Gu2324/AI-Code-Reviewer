@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+
+    <link rel="stylesheet" href="/static/style.css" />
+
+    <title>Jarvis Code Assistant</title>
+  </head>
+
+  <body>
+    <h1>Jarvis Code Assistant</h1>
+
+    <form class="code_reviwer" method="POST" action="/code_reviewer">
+      <label>Your Code</label>
+
+      <textarea
+        class="input_code"
+        name="input_code"
+        placeholder="Inserisci il tuo codice python"
+        required
+      ></textarea>
+
+      <button type="submit">Review Code</button>
+    </form>
+
+    {% if reviewed_code %}
+
+    <div class="reviewed_code_zone">
+      <h2>Reviewed Code</h2>
+      <pre>{{reviewed_code}}</pre>
+    </div>
+
+    {% endif %}
+  </body>
+</html>
