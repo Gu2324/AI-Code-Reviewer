@@ -1,0 +1,137 @@
+/* Reset base */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  background: #f5f7fa;
+  color: #23272e;
+  min-height: 100vh;
+}
+
+/* Titolo principale */
+h1 {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+  color: #2d3748;
+}
+
+/* Form layout */
+form.code_reviwer {
+  background: #fff;
+  max-width: 600px;
+  margin: 2rem auto 0 auto;
+  padding: 2rem 2.5rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+form.code_reviwer label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+textarea.input_code {
+  width: 100%;
+  min-height: 180px;
+  background: #23272e;
+  color: #e3eaf2;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 1.1rem;
+  resize: vertical;
+  box-shadow: 0 2px 8px rgba(35,39,46,0.04);
+  transition: box-shadow 0.2s;
+}
+
+textarea.input_code:focus {
+  outline: 2px solid #3182ce;
+  box-shadow: 0 0 0 2px #3182ce33;
+}
+
+button[type="submit"] {
+  background: linear-gradient(90deg, #3182ce 60%, #00b4d8 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.9rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(49,130,206,0.08);
+  transition: background 0.2s, transform 0.1s;
+}
+
+button[type="submit"]:hover {
+  background: linear-gradient(90deg, #2563eb 60%, #0096c7 100%);
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* Zona codice revisionato */
+.reviewed_code_zone {
+  background: #23272e;
+  color: #e3eaf2;
+  max-width: 700px;
+  margin: 2.5rem auto 0 auto;
+  padding: 2rem 2.5rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  position: relative;
+  overflow-x: auto;
+  min-height: 180px;
+  animation: fadeIn 0.7s;
+}
+
+.reviewed_code_zone h2 {
+  margin-top: 0;
+  color: #00b4d8;
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+}
+
+/* Animazione typing per il codice revisionato */
+.reviewed_code_zone pre {
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  font-size: 1.08rem;
+  background: none;
+  color: #e3eaf2;
+  margin: 1rem 0 0 0;
+  padding: 0;
+  border: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 120px;
+  border-right: 2px solid #e3eaf2;
+  overflow-x: auto;
+  animation: blink-caret 0.75s step-end infinite;
+}
+
+/* Fade-in per la zona codice */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+/* Caret blink */
+@keyframes blink-caret {
+  0%, 100% { border-color: transparent; }
+  50% { border-color: #e3eaf2; }
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  form.code_reviwer, .reviewed_code_zone {
+    max-width: 98vw;
+    padding: 1.2rem 1vw;
+  }
+  h1 {
+    font-size: 2rem;
+  }
+}
