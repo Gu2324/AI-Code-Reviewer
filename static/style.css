@@ -1,68 +1,55 @@
+/* Stili globali e body */
 html {
-  /* Rimuovi l'immagine di sfondo da html, la sposteremo nel pseudo-elemento */
-  /* background-image: url('/static/images/codioful-formerly-gradienta-n2XqPm7Bqhk-unsplash.jpg'); */
-  /* background-size: cover; */
-  /* background-position: center; */
-  height: 100%; /* Imposta altezza al 100% per assicurare che ::before copra l'intera pagina */
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: x-large;
-  overflow: hidden; /* Importante per evitare barre di scorrimento causate dal blur */
+  overflow: hidden;
 }
 
-/* --- Inizio Modifiche per Sfondo Sfocato --- */
+/* Sfondo della pagina */
 html::before {
   content: '';
-  position: fixed; /* Usa fixed per coprire l'intera viewport e rimanere fisso allo scroll */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/static/images/codioful-formerly-gradienta-n2XqPm7Bqhk-unsplash.jpg'); /* La tua immagine di sfondo */
+  background-image: url("/static/images/black-grey.png");
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  z-index: -1; /* Metti il pseudo-elemento dietro tutto il contenuto */
-
-  /* Applica il filtro di sfocatura qui */
-  filter: blur(12px); /* Aumenta o diminuisci i pixel per più o meno sfocatura */
-  -webkit-filter: blur(8px); /* Prefisso per compatibilità Safari */
-
-  /* Per evitare bordi sfuocati visibili a causa del blur */
-  transform: scale(1.05);
+  z-index: -1;
 }
-/* --- Fine Modifiche per Sfondo Sfocato --- */
-
 
 body {
   width: 100%;
   text-align: center;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  /* Aggiungi min-height per assicurare che il body occupi spazio, se necessario */
   min-height: 100vh;
-  /* Assicurati che il body abbia un z-index superiore al pseudo-elemento dell'html */
-  position: relative; /* Necessario per z-index */
+  position: relative;
   z-index: 1;
 }
 
-.glass {
-  position: relative;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(2px) saturate(180%);
-  -webkit-backdrop-filter: blur(2px) saturate(180%); /* Aggiunto prefisso per Safari */
-  border: 0.0625rem solid rgba(255, 255, 255, 0.4);
-  border-radius: 30px;
-  padding: 1.25rem;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), inset 0 4px 20px rgba(255, 255, 255, 0.3);
+h1 {
+  color: rgb(255, 255, 255);
 }
 
+label {
+  color: rgb(255, 255, 255);
+  font-weight: 800;
+}
+
+/* Contenitori e form */
+
+/* Allineamento del contenitore principale: dispone a fianco i due spazi per il codice, inviato e revisionato */
 .code_container {
   display: flex;
   justify-content: center;
   gap: 20px;
 }
 
+/* Gestisce le grandezze orizzonali delle due aree di codice */
 form {
   display: flex;
   flex-direction: column;
@@ -72,17 +59,23 @@ form {
   position: relative;
 }
 
-h1 {
-  color: white;
-}
-
-label {
-  color: white;
-  font-weight: 800;
-}
-
+/* Textarea */
 textarea {
-  width: calc(100% - 20px);
+  width: calc(100% - 20px); /* Sottrae il padding dal 100% per evitare sovrapposizioni */
+  min-height: 760px;
+  font-size: x-large;
+  resize: none;
+  padding: 15px;
+  padding-bottom: 60px;
+  box-sizing: border-box;
+  border-radius: 32px;
+  outline: none;
+  color: rgb(255, 255, 255);
+  background-color: rgba(0, 0, 0, 0.479);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+textarea#reviewed_code {
   min-height: 760px;
   font-size: x-large;
   resize: none;
@@ -94,9 +87,32 @@ textarea {
   color: white;
   background-color: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  white-space: pre-wrap;
 }
 
-/* Regole comuni per i bottoni*/
+/* Scrollbar delle textarea */
+textarea::-webkit-scrollbar {
+  width: 12px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background-color: rgba(134, 134, 134, 0.45);
+  border-radius: 100px;
+  border-top: 100px solid transparent;
+  border-bottom: 100px solid transparent;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(134, 134, 134, 0.75);
+}
+
+::-webkit-scrollbar-button {
+  width: 50px;
+  height: 50px;
+}
+
+/* Bottoni */
 button {
   position: absolute;
   bottom: 20px;
@@ -112,16 +128,8 @@ button {
   padding: 0;
   text-indent: -9999px;
   overflow: hidden;
-
-  /* --- Effetto Liquid Glass per i Bottoni - Modifiche qui --- */
-  background-color: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(2px) saturate(180%);
-  -webkit-backdrop-filter: blur(2px) saturate(180%);
-  border: 0.0625rem solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), inset 0 3px 15px rgba(255, 255, 255, 0.1);
 }
 
-/* Stili specifici per il bottone di invio */
 .send_button {
   background-image: url('/static/images/send-1-svgrepo-com(1).svg');
   background-size: 65%;
@@ -130,7 +138,6 @@ button {
   right: 30px;
 }
 
-/* Stili specifici per il bottone di copia */
 .copy_button {
   background-image: url('/static/images/copy-3-svgrepo-com.svg');
   background-size: 80%;
@@ -151,55 +158,10 @@ button:active {
   transform: translateY(1px);
 }
 
-/* Stili per l'animazione macchina da scrivere */
+/* Animazione macchina da scrivere */
 .typewriter-text {
-  /* Imposta larghezza per simulare una linea di testo fissa */
-  width: 0; /* Inizialmente largo 0 per nascondere il testo */
-  overflow: hidden; /* Nasconde il testo che va oltre la larghezza */
-  white-space: nowrap; /* Mantiene il testo su una singola riga */
-  border-right: 0.15em solid white; /* Il cursore lampeggiante */
-  animation:
-    typing 4s steps(40, end) forwards, /* L'animazione di digitazione */
-    blink-caret 0.75s step-end infinite; /* L'animazione del cursore */
-  font-family: monospace; /* Un font a larghezza fissa è più adatto */
-}
-
-/* Animazione di digitazione */
-@keyframes typing {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%; /* Il testo si espande fino a mostrare tutti i caratteri */
-  }
-}
-
-/* Animazione del cursore lampeggiante */
-@keyframes blink-caret {
-  from, to {
-    border-color: transparent; /* Cursore invisibile */
-  }
-  50% {
-    border-color: white; /* Cursore visibile */
-  }
-}
-
-/* Impostazioni per il textarea di output */
-textarea#reviewed_code { /* Assicurati che l'id sia corretto nel tuo HTML */
-    /* Queste proprietà sono importanti per l'effetto macchina da scrivere nel textarea */
-    min-height: 760px;
-    font-size: x-large;
-    resize: none;
-    padding: 15px;
-    padding-bottom: 60px;
-    box-sizing: border-box;
-    border-radius: 16px;
-    outline: none;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-    /* Inizialmente nascondi l'overflow per preparare l'animazione */
-    overflow: hidden;
-    white-space: pre-wrap; /* Permette al testo di andare a capo */
+  white-space: pre-wrap; /* Permette al testo di andare a capo */
+  overflow: hidden; 
+  font-family: monospace; 
+ 
 }
