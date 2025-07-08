@@ -75,7 +75,7 @@ def call_ai_model(prompt):
 
 @app.route('/', methods = ["GET"])
 def show_form():
-    return render_template('index.html')
+    return render_template('index.html', input_code="")
 
 
 #devo inserire un endpoint per ricevere il codice e costruire il prompt
@@ -88,18 +88,27 @@ def review_code():
         return render_template('index.html', error = "Inserisci il codice da revisionare")
     
     prompt = (
-        "Correggi questo codice python, inserendo commenti per segnalre:\n"
-        "1. Errori di sintassi \n"
-        "2. Errori di logica \n"
-        "3. Variabili non utilizzate\n"
-        "4. Genera tutti i docstrings necessari \n"
-        "Inoltre, inserisci, in fondo al codice, una nota che indichi dei suggerimenti di stile basati su PEP8.\n"
-        "Il codice python da correggere è:\n\n"
-        f"{python_code}"
-        ""
-        )
+    "Sei un esperto in revisione di codice Python.\n" 
+    "Il tuo compito è fornire una revisione sintetica e focalizzata del codice Python fornito."
+    "La revisione deve includere:\n"
+    "- **Commenti direttamente nel codice** (come commenti Python `#`):\n"
+    "- Segnalazioni di errori di sintassi.\n"
+    "- Segnalazioni di errori di logica.\n"
+    "- Identificazione di variabili non utilizzate.\n"
+    "- Suggerimenti per imprecisioni stilistiche basate su **PEP8**.\n"
+    "- **Aggiunta di docstrings** (se mancanti) per le funzioni dichiarate dall'utente. Utilizza il formato :'''Docstring della funzione'''.\n"
+    "**Regole di output:**\n"
+    "- **Non modificare** in alcun modo il codice Python originale fornito (eccetto per l'aggiunta di commenti e docstrings).\n"
+    "- Non includere testo introduttivo o conclusivo.\n"
+    "- Non racchiudere l'output in blocchi di codice Markdown (es. ```python o ```).\n"
+
+    "Il codice da commentare è:\n"
+    f"{python_code}"
+    )
     
     reviewed_code = call_ai_model(prompt= prompt)
+
+    #reviewed_code = clean_code_block(reviewed_code)
 
     return render_template('index.html', original_code = python_code, reviewed_code = reviewed_code)
 

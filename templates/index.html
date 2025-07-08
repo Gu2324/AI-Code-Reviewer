@@ -13,26 +13,33 @@
   <body>
     <h1>Jarvis Code Assistant</h1>
 
-    <form class="code_reviwer" method="POST" action="/code_reviewer">
-      <label>Your Code</label>
+    
+    <div class="code_container">
+      <form class="code_reviwer" method="POST" action="/code_reviewer">
+        <label>Your Code</label>
 
-      <textarea
-        class="input_code"
-        name="input_code"
-        placeholder="Inserisci il tuo codice python"
-        required
-      ></textarea>
+        <textarea
+          class ="glass input_code"
+          name="input_code"
+          placeholder="Inserisci il tuo codice python"
+          required
+        ></textarea>
 
-      <button type="submit">Review Code</button>
-    </form>
+        <button type="submit" class="send_button" aria-label="Invia codice"></button>
+      </form>
 
-    {% if reviewed_code %}
+      <form class="reviewed_code_form">
+        <label>Reviewed Code</label>
 
-    <div class="reviewed_code_zone">
-      <h2>Reviewed Code</h2>
-      <pre>{{reviewed_code}}</pre>
+        <textarea
+          class="glass reviewed_code_output"
+          name="reviewed_code_output"
+          readonly
+        >{{ reviewed_code }}</textarea
+        >
+
+        <button type="button" class="copy_button" class="glass" onclick="copyFunction()" aria-label="Copia codice">Copy</button>
+      </form>
     </div>
-
-    {% endif %}
   </body>
 </html>

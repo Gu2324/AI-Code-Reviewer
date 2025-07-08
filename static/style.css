@@ -1,137 +1,205 @@
-/* Reset base */
+html {
+  /* Rimuovi l'immagine di sfondo da html, la sposteremo nel pseudo-elemento */
+  /* background-image: url('/static/images/codioful-formerly-gradienta-n2XqPm7Bqhk-unsplash.jpg'); */
+  /* background-size: cover; */
+  /* background-position: center; */
+  height: 100%; /* Imposta altezza al 100% per assicurare che ::before copra l'intera pagina */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: x-large;
+  overflow: hidden; /* Importante per evitare barre di scorrimento causate dal blur */
+}
+
+/* --- Inizio Modifiche per Sfondo Sfocato --- */
+html::before {
+  content: '';
+  position: fixed; /* Usa fixed per coprire l'intera viewport e rimanere fisso allo scroll */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/static/images/codioful-formerly-gradienta-n2XqPm7Bqhk-unsplash.jpg'); /* La tua immagine di sfondo */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1; /* Metti il pseudo-elemento dietro tutto il contenuto */
+
+  /* Applica il filtro di sfocatura qui */
+  filter: blur(12px); /* Aumenta o diminuisci i pixel per più o meno sfocatura */
+  -webkit-filter: blur(8px); /* Prefisso per compatibilità Safari */
+
+  /* Per evitare bordi sfuocati visibili a causa del blur */
+  transform: scale(1.05);
+}
+/* --- Fine Modifiche per Sfondo Sfocato --- */
+
+
 body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Fira Mono', 'Consolas', monospace;
-  background: #f5f7fa;
-  color: #23272e;
-  min-height: 100vh;
-}
-
-/* Titolo principale */
-h1 {
+  width: 100%;
   text-align: center;
-  margin-top: 2rem;
-  font-size: 2.5rem;
-  letter-spacing: 1px;
-  color: #2d3748;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Aggiungi min-height per assicurare che il body occupi spazio, se necessario */
+  min-height: 100vh;
+  /* Assicurati che il body abbia un z-index superiore al pseudo-elemento dell'html */
+  position: relative; /* Necessario per z-index */
+  z-index: 1;
 }
 
-/* Form layout */
-form.code_reviwer {
-  background: #fff;
-  max-width: 600px;
-  margin: 2rem auto 0 auto;
-  padding: 2rem 2.5rem;
-  border-radius: 14px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+.glass {
+  position: relative;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(2px) saturate(180%);
+  -webkit-backdrop-filter: blur(2px) saturate(180%); /* Aggiunto prefisso per Safari */
+  border: 0.0625rem solid rgba(255, 255, 255, 0.4);
+  border-radius: 30px;
+  padding: 1.25rem;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), inset 0 4px 20px rgba(255, 255, 255, 0.3);
+}
+
+.code_container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-}
-
-form.code_reviwer label {
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  color: #374151;
-}
-
-textarea.input_code {
-  width: 100%;
-  min-height: 180px;
-  background: #23272e;
-  color: #e3eaf2;
-  border: none;
-  border-radius: 8px;
-  padding: 1rem;
-  font-size: 1.1rem;
-  resize: vertical;
-  box-shadow: 0 2px 8px rgba(35,39,46,0.04);
-  transition: box-shadow 0.2s;
-}
-
-textarea.input_code:focus {
-  outline: 2px solid #3182ce;
-  box-shadow: 0 0 0 2px #3182ce33;
-}
-
-button[type="submit"] {
-  background: linear-gradient(90deg, #3182ce 60%, #00b4d8 100%);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 0.9rem 2rem;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(49,130,206,0.08);
-  transition: background 0.2s, transform 0.1s;
-}
-
-button[type="submit"]:hover {
-  background: linear-gradient(90deg, #2563eb 60%, #0096c7 100%);
-  transform: translateY(-2px) scale(1.03);
-}
-
-/* Zona codice revisionato */
-.reviewed_code_zone {
-  background: #23272e;
-  color: #e3eaf2;
-  max-width: 700px;
-  margin: 2.5rem auto 0 auto;
-  padding: 2rem 2.5rem;
-  border-radius: 14px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  width: 45%;
+  padding: 10px;
+  align-items: center;
   position: relative;
-  overflow-x: auto;
-  min-height: 180px;
-  animation: fadeIn 0.7s;
 }
 
-.reviewed_code_zone h2 {
-  margin-top: 0;
-  color: #00b4d8;
-  font-size: 1.3rem;
-  letter-spacing: 0.5px;
+h1 {
+  color: white;
 }
 
-/* Animazione typing per il codice revisionato */
-.reviewed_code_zone pre {
-  font-family: 'Fira Mono', 'Consolas', monospace;
-  font-size: 1.08rem;
-  background: none;
-  color: #e3eaf2;
-  margin: 1rem 0 0 0;
-  padding: 0;
+label {
+  color: white;
+  font-weight: 800;
+}
+
+textarea {
+  width: calc(100% - 20px);
+  min-height: 760px;
+  font-size: x-large;
+  resize: none;
+  padding: 15px;
+  padding-bottom: 60px;
+  box-sizing: border-box;
+  border-radius: 16px;
+  outline: none;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Regole comuni per i bottoni*/
+button {
+  position: absolute;
+  bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
   border: none;
-  white-space: pre-wrap;
-  word-break: break-word;
-  min-height: 120px;
-  border-right: 2px solid #e3eaf2;
-  overflow-x: auto;
-  animation: blink-caret 0.75s step-end infinite;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0;
+  text-indent: -9999px;
+  overflow: hidden;
+
+  /* --- Effetto Liquid Glass per i Bottoni - Modifiche qui --- */
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px) saturate(180%);
+  -webkit-backdrop-filter: blur(2px) saturate(180%);
+  border: 0.0625rem solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), inset 0 3px 15px rgba(255, 255, 255, 0.1);
 }
 
-/* Fade-in per la zona codice */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(30px);}
-  to { opacity: 1; transform: translateY(0);}
+/* Stili specifici per il bottone di invio */
+.send_button {
+  background-image: url('/static/images/send-1-svgrepo-com(1).svg');
+  background-size: 65%;
+  background-repeat: no-repeat;
+  background-position: center;
+  right: 30px;
 }
 
-/* Caret blink */
+/* Stili specifici per il bottone di copia */
+.copy_button {
+  background-image: url('/static/images/copy-3-svgrepo-com.svg');
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+  right: 30px;
+}
+
+button:hover {
+  background-color: rgba(0, 0, 0, 0.45);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), inset 0 4px 20px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+button:active {
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.1);
+  transform: translateY(1px);
+}
+
+/* Stili per l'animazione macchina da scrivere */
+.typewriter-text {
+  /* Imposta larghezza per simulare una linea di testo fissa */
+  width: 0; /* Inizialmente largo 0 per nascondere il testo */
+  overflow: hidden; /* Nasconde il testo che va oltre la larghezza */
+  white-space: nowrap; /* Mantiene il testo su una singola riga */
+  border-right: 0.15em solid white; /* Il cursore lampeggiante */
+  animation:
+    typing 4s steps(40, end) forwards, /* L'animazione di digitazione */
+    blink-caret 0.75s step-end infinite; /* L'animazione del cursore */
+  font-family: monospace; /* Un font a larghezza fissa è più adatto */
+}
+
+/* Animazione di digitazione */
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%; /* Il testo si espande fino a mostrare tutti i caratteri */
+  }
+}
+
+/* Animazione del cursore lampeggiante */
 @keyframes blink-caret {
-  0%, 100% { border-color: transparent; }
-  50% { border-color: #e3eaf2; }
+  from, to {
+    border-color: transparent; /* Cursore invisibile */
+  }
+  50% {
+    border-color: white; /* Cursore visibile */
+  }
 }
 
-/* Responsive */
-@media (max-width: 800px) {
-  form.code_reviwer, .reviewed_code_zone {
-    max-width: 98vw;
-    padding: 1.2rem 1vw;
-  }
-  h1 {
-    font-size: 2rem;
-  }
+/* Impostazioni per il textarea di output */
+textarea#reviewed_code { /* Assicurati che l'id sia corretto nel tuo HTML */
+    /* Queste proprietà sono importanti per l'effetto macchina da scrivere nel textarea */
+    min-height: 760px;
+    font-size: x-large;
+    resize: none;
+    padding: 15px;
+    padding-bottom: 60px;
+    box-sizing: border-box;
+    border-radius: 16px;
+    outline: none;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    /* Inizialmente nascondi l'overflow per preparare l'animazione */
+    overflow: hidden;
+    white-space: pre-wrap; /* Permette al testo di andare a capo */
 }
