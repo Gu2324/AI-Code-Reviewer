@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const reviewedCodeOutput = document.querySelector('.reviewed_code_output');
     const copyButton = document.querySelector('.copy_button');
-    const originalText = reviewedCodeOutput.textContent.trim(); // Get the initial text content
+    const originalText = reviewedCodeOutput.textContent.trim(); 
 
     // Elimino il testo iniziale, così da poter iniziare la scrittura da zero
     reviewedCodeOutput.textContent = '';
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {string} text Il testo da "scrivere" nella textarea.
      * @param {number} delay Il ritardo in millisecondi tra ogni carattere.
      */
-    function typewriterEffect(element, text, delay = 50) {
+    function typewriterEffect(element, text, delay = 25) {
         let i = 0;
         function typeChar() {
             if (i < text.length) {
