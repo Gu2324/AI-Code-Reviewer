@@ -4,9 +4,11 @@
     <meta charset="utf-8" />
 
     <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/static/github-dark.css">
 
     <script src="/static/script.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
     <title>Jarvis Code Assistant</title>
   </head>
 
@@ -31,13 +33,9 @@
       <form class="reviewed_code_form">
         <label>Reviewed Code</label>
 
-        <textarea
-          class="reviewed_code_output"
-          name="reviewed_code_output"
-          readonly
-        >{{ reviewed_code }}</textarea
-        >
-
+        
+        <pre><code class="reviewed_code_output language-python" name="reviewed_code_output">{{ reviewed_code | safe }}</code></pre> 
+        
         <button type="button" class="copy_button" class="glass" onclick="copyFunction()" aria-label="Copia codice">Copy</button>
       </form>
     </div>

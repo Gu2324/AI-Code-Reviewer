@@ -1,14 +1,15 @@
-/* Stili globali e body */
-html {
+/* -------------------------------
+   STILI GLOBALI E BODY
+---------------------------------- */
+html, body {
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: 0;
   font-size: x-large;
-  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-y: auto;
+  background-image: url(/static/images/black-grey.png);
 }
 
-/* Sfondo della pagina */
 html::before {
   content: '';
   position: fixed;
@@ -25,94 +26,128 @@ html::before {
 body {
   width: 100%;
   text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
   position: relative;
   z-index: 1;
+  padding-bottom: 40px;
 }
 
-h1 {
-  color: rgb(255, 255, 255);
+h1, label {
+  color: white;
 }
 
 label {
-  color: rgb(255, 255, 255);
   font-weight: 800;
 }
 
-/* Contenitori e form */
 
-/* Allineamento del contenitore principale: dispone a fianco i due spazi per il codice, inviato e revisionato */
+/* -------------------------------
+   CONTENITORI E LAYOUT
+---------------------------------- */
 .code_container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
+  padding: 40px 20px;
+  box-sizing: border-box;
 }
 
-/* Gestisce le grandezze orizzonali delle due aree di codice */
 form {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   width: 45%;
+  min-width: 300px;
+  max-width: 600px;
+  min-height: 760px;
   padding: 10px;
-  align-items: center;
   position: relative;
+  box-sizing: border-box;
 }
 
-/* Textarea */
-textarea {
-  width: calc(100% - 20px); /* Sottrae il padding dal 100% per evitare sovrapposizioni */
-  min-height: 760px;
+
+/* -------------------------------
+   TEXTAREA E PRE / CODE
+---------------------------------- */
+textarea,
+pre {
+  position: relative;
+  height: 760px;
+  width: 100%;
   font-size: x-large;
+  font-family: 'Courier New', Courier, monospace;
   resize: none;
   padding: 15px;
-  padding-bottom: 60px;
+  padding-bottom: 60px; /* spazio per bottone */
   box-sizing: border-box;
   border-radius: 32px;
   outline: none;
-  color: rgb(255, 255, 255);
+  color: white;
   background-color: rgba(0, 0, 0, 0.479);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0;
 }
 
-textarea#reviewed_code {
-  min-height: 760px;
-  font-size: x-large;
-  resize: none;
-  padding: 15px;
-  padding-bottom: 60px;
-  box-sizing: border-box;
-  border-radius: 16px;
-  outline: none;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  overflow: hidden;
+pre {
+  white-space: pre;
+}
+
+pre > code {
+  display: block;
   white-space: pre-wrap;
+  word-break: break-word;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  height: 100%;
 }
 
-/* Scrollbar delle textarea */
-textarea::-webkit-scrollbar {
+
+/* -------------------------------
+   SCROLLBAR PERSONALIZZATE
+---------------------------------- */
+textarea::-webkit-scrollbar,
+pre::-webkit-scrollbar {
   width: 12px;
 }
 
-textarea::-webkit-scrollbar-thumb {
+textarea::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
   background-color: rgba(134, 134, 134, 0.45);
   border-radius: 100px;
-  border-top: 100px solid transparent;
-  border-bottom: 100px solid transparent;
 }
 
-textarea::-webkit-scrollbar-thumb:hover {
+textarea::-webkit-scrollbar-thumb:hover,
+pre::-webkit-scrollbar-thumb:hover {
   background-color: rgba(134, 134, 134, 0.75);
 }
 
-::-webkit-scrollbar-button {
-  width: 50px;
-  height: 50px;
+
+/* -------------------------------
+   HIGHLIGHT.JS OVERRIDES
+---------------------------------- */
+.hljs,
+code.hljs {
+  background: transparent !important;
+  color: inherit !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: inherit !important;
 }
 
-/* Bottoni */
+
+/* -------------------------------
+   BOTTONI (INVIO / COPIA)
+---------------------------------- */
 button {
   position: absolute;
   bottom: 20px;
@@ -158,10 +193,11 @@ button:active {
   transform: translateY(1px);
 }
 
-/* Animazione macchina da scrivere */
+/* -------------------------------
+   MACCHINA DA SCRIVERE
+---------------------------------- */
 .typewriter-text {
-  white-space: pre-wrap; /* Permette al testo di andare a capo */
-  overflow: hidden; 
-  font-family: monospace; 
- 
+  white-space: pre-wrap;
+  overflow: hidden;
+  font-family: monospace;
 }

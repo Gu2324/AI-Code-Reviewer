@@ -208,6 +208,11 @@ def review_code():
     )
      
     reviewed_code = get_ai_response(prompt=prompt)
+    
+    #Debug per highlight.js
+    print("REVIEWED_CODE RAW:")
+    print(repr(reviewed_code))
+
     return render_template('index.html', original_code = python_code, reviewed_code = reviewed_code)
 
 
