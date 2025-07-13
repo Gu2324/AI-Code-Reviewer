@@ -2,24 +2,32 @@
 <html lang="it">
   <head>
     <meta charset="utf-8" />
-
     <link rel="stylesheet" href="/static/style.css" />
     <link rel="stylesheet" href="/static/github-dark.css">
-
-    <script src="/static/script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
     <title>Jarvis Code Assistant</title>
   </head>
-
   <body>
-    <h1>Jarvis Code Assistant</h1>
+    <div class="header_container">
+      <h1>Jarvis Code Assistant</h1>
+      <div class="settings_menu_wrapper">
+        <button class="settings_icon" aria-label="Apri impostazioni" onclick="toggleSettingsMenu()"></button>
+        <div class="review_mode_selection" id="review_mode_menu">
+            <label for="review_type_main">Modalità:</label>
+            <select id="review_type_main" name="review_type" class="review_type_select">
+                <option value="bug_detection" {% if selected_review_type == 'bug_detection' %}selected{% endif %}>Bug</option>
+                <option value="syntax_revision" {% if selected_review_type == 'syntax_revision' %}selected{% endif %}>Sintassi</option>
+                <option value="style_suggestions" {% if selected_review_type == 'style_suggestions' %}selected{% endif %}>Stile</option>
+                <option value="doc_strings_add" {% if selected_review_type == 'doc_strings_add' %}selected{% endif %}>Docstrings</option>
+            </select>
+        </div>
+      </div>
+    </div>
 
-    
     <div class="code_container">
-      <form class="code_reviwer" method="POST" action="/code_reviewer">
+      <form class="code_reviwer" id="code_reviwer_form" method="POST" action="/code_reviewer">
         <label>Your Code</label>
-
         <textarea
           class ="input_code"
           name="input_code"
@@ -27,17 +35,19 @@
           required
         ></textarea>
 
+        <input type="hidden" id="hidden_review_type" name="review_type" value="{{ selected_review_type or 'bug_detection' }}">
+
         <button type="submit" class="send_button" aria-label="Invia codice"></button>
       </form>
-
       <form class="reviewed_code_form">
         <label>Reviewed Code</label>
-
-        
-        <pre><code class="reviewed_code_output language-python" name="reviewed_code_output">{{ reviewed_code | safe }}</code></pre> 
-        
-        <button type="button" class="copy_button" class="glass" onclick="copyFunction()" aria-label="Copia codice">Copy</button>
+        <pre><code class="reviewed_code_output language-python" name="reviewed_code_output">{% if reviewed_code %}{{ reviewed_code | safe }}{% else %}Il codice revisionato apparirà qui.{% endif %}</code></pre> 
+        {% if error %}
+        <p class="error_message" id="form_error_message" style="color: red;">{{ error }}</p>
+        {% endif %}
+        <button type="button" class="copy_button" aria-label="Copia codice">Copy</button>
       </form>
     </div>
+    <script src="/static/script.js"></script>
   </body>
 </html>

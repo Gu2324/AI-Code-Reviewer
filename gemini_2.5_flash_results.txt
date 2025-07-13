@@ -1,0 +1,1604 @@
+--- Risultati della Code Review LLM ---
+Tempo totale impiegato: 309.22 secondi
+
+
+=== Categoria: Bug Detection ===
+
+--- Input 1 ---
+# Contenuto di Input1.py per 1
+def example_function():
+    pass
+
+--- Output 1 (Revisione) ---
+```python
+# Contenuto di Input1.py per 1
+def example_function():
+    pass
+```
+
+--- Input 2 ---
+def add_item(item, my_list=[]):
+    my_list.append(item)
+    return my_list
+
+--- Output 2 (Revisione) ---
+```python
+def add_item(item, my_list=[]): # POTENTIAL_BUG: ALTA - L'uso di un argomento di default mutabile (my_list=[]) può portare a comportamenti inattesi, poiché la lista viene creata una sola volta quando la funzione è definita e riutilizzata in chiamate successive se l'argomento non viene fornito. Questo può causare accumulo di elementi tra chiamate.
+    my_list.append(item)
+    return my_list
+```
+
+--- Input 3 ---
+def is_true(value):
+    if value == True:
+        return True
+    else:
+        return False
+
+--- Output 3 (Revisione) ---
+```python
+def is_true(value):
+    if value == True: # BUG: ALTA - Errore logico e anti-pattern. Il nome della funzione 'is_true' suggerisce di verificare la "truthiness" di un valore in Python (come 'bool(value)' o 'if value:'). Tuttavia, la condizione 'value == True' valuta True solo se il valore è esattamente il booleano `True` o l'intero `1`, ignorando tutti gli altri valori considerati "truthy" in Python (es. stringhe non vuote, numeri diversi da zero, liste non vuote, ecc.). Questo porta a un comportamento inatteso e non conforme alle convenzioni Python.
+        return True
+    else:
+        return False # POTENTIAL_BUG: MEDIA - Questo pattern 'if condition: return True else: return False' è ridondante e non idiomatico in Python. L'intera funzione potrebbe essere semplificata in una singola riga: 'return value == True' (per mantenere la logica attuale) oppure, più tipicamente e correttamente per il nome della funzione, 'return bool(value)'.
+```
+
+--- Input 4 ---
+# In Python 2 this would be a bug
+result = 5 / 2
+
+--- Output 4 (Revisione) ---
+```python
+# In Python 2 this would be a bug
+result = 5 / 2 # POTENTIAL_BUG: MEDIA - In Python 3, l'operatore `/` esegue la divisione in virgola mobile (true division), risultando in 2.5. Se l'intento era la divisione intera (per ottenere 2), l'operatore corretto sarebbe `//`. La chiara intenzione dell'operazione non è esplicita e potrebbe portare a risultati inattesi se la divisione intera era il requisito.
+```
+
+--- Input 5 ---
+if 0.1 + 0.2 == 0.3:
+    print("Equal")
+else:
+    print("Not Equal")
+
+--- Output 5 (Revisione) ---
+```python
+if 0.1 + 0.2 == 0.3: # BUG: ALTA - Problema di precisione in virgola mobile: 0.1 + 0.2 non è esattamente uguale a 0.3 a causa della rappresentazione binaria in virgola mobile (di solito valuta a 0.30000000000000004), portando a un confronto impreciso.
+    print("Equal")
+else:
+    print("Not Equal")
+```
+
+--- Input 6 ---
+my_string = "hello world"
+my_string.upper()
+print(my_string)
+
+--- Output 6 (Revisione) ---
+```python
+my_string = "hello world"
+my_string.upper() # BUG: MEDIA - Le stringhe in Python sono immutabili. Il metodo .upper() restituisce una nuova stringa in maiuscolo, ma il risultato non viene assegnato a nessuna variabile, rendendo l'operazione inefficace.
+print(my_string)
+```
+
+--- Input 7 ---
+list = [1, 2, 3]
+print(list)
+# Now you can't use the list() constructor
+
+--- Output 7 (Revisione) ---
+```python
+list = [1, 2, 3] # POTENTIAL_BUG: ALTA - Il nome della variabile "list" sovrascrive il costruttore built-in "list()", rendendolo inutilizzabile nello scope corrente e potenziale causa di TypeError se invocato. È una best practice evitare di usare nomi di built-in per le variabili.
+print(list)
+# Now you can't use the list() constructor
+```
+
+--- Input 8 ---
+a = []
+b = [a]
+a.append(b)
+print(a)
+
+--- Output 8 (Revisione) ---
+```python
+a = []
+b = [a]
+a.append(b) # POTENTIAL_BUG: MEDIA - Creazione di un riferimento circolare. La lista 'a' conterrà un riferimento a 'b', che a sua volta conterrà un riferimento ad 'a', formando una struttura ricorsiva. Questo potrebbe essere inaspettato e causare problemi con operazioni come la serializzazione (es. JSON), la copia profonda (copy.deepcopy) o la comprensione della struttura dati, se non è il comportamento intenzionale.
+print(a)
+```
+
+--- Input 9 ---
+my_dict = {'a': 1, 'b': 2}
+if 1 in my_dict:
+    print("Value found")
+
+--- Output 9 (Revisione) ---
+```python
+my_dict = {'a': 1, 'b': 2}
+if 1 in my_dict: # BUG: ALTA - L'operatore 'in' per i dizionari verifica la presenza di chiavi, non di valori. La condizione '1 in my_dict' sarà sempre falsa perché '1' non è una chiave. Se l'intenzione era cercare un valore, si dovrebbe usare '1 in my_dict.values()'.
+    print("Value found")
+```
+
+--- Input 10 ---
+# Tries to check if x is 1 or 2
+x = 3
+if x == 1 or 2:
+    print("x is 1 or 2")
+
+--- Output 10 (Revisione) ---
+```python
+# Tries to check if x is 1 or 2
+x = 3
+if x == 1 or 2: # BUG: ALTA - L'espressione `or 2` viene valutata come un valore booleano `True` (poiché 2 è un valore "truthy" in Python). Questo rende la condizione `if` sempre vera se `x == 1` è falso, indipendentemente dal valore di `x`. La logica intesa era probabilmente `if x == 1 or x == 2:`.
+    print("x is 1 or 2")
+```
+
+--- Input 11 ---
+my_list = [10, 20, 30]
+for i in range(len(my_list) - 1):
+    print(my_list[i+1])
+
+--- Output 11 (Revisione) ---
+```python
+my_list = [10, 20, 30]
+for i in range(len(my_list) - 1): # POTENTIAL_BUG: MEDIA - Questo ciclo elabora gli elementi della lista a partire dal secondo (indice 1) fino all'ultimo (indice `len(my_list)-1`), saltando il primo elemento (indice 0). Se l'intenzione era di elaborare tutti gli elementi, o se il primo elemento richiede un'elaborazione specifica, questa logica è incompleta. Se l'intenzione è escludere il primo elemento, una scrittura più chiara e pythonica sarebbe `for item in my_list[1:]:` o `for i in range(1, len(my_list)): print(my_list[i])`.
+    print(my_list[i+1])
+```
+
+--- Input 12 ---
+class MyClass:
+    def my_method(self):
+        print("Method called")
+    def another_method(self):
+        my_method()
+
+--- Output 12 (Revisione) ---
+```python
+class MyClass:
+    def my_method(self):
+        print("Method called")
+    def another_method(self):
+        my_method() # BUG: CRITICA - `my_method()` è un metodo d'istanza e deve essere chiamato tramite `self.my_method()`. Così com'è, causerà un `NameError` perché Python cercherà una funzione globale o locale con quel nome.
+```
+
+--- Input 13 ---
+class Dog:
+    tricks = []
+    def __init__(self, name):
+        self.name = name
+    def add_trick(self, trick):
+        self.tricks.append(trick)
+
+d = Dog("Fido")
+e = Dog("Buddy")
+d.add_trick("roll over")
+print(e.tricks)
+
+--- Output 13 (Revisione) ---
+```python
+class Dog:
+    tricks = [] # BUG: ALTA - L'attributo 'tricks' è definito come variabile di classe anziché di istanza. Essendo una lista mutabile, tutte le istanze di Dog condivideranno la stessa lista di trucchi, causando un comportamento inatteso quando un'istanza modifica la lista.
+    def __init__(self, name):
+        self.name = name
+    def add_trick(self, trick):
+        self.tricks.append(trick)
+
+d = Dog("Fido")
+e = Dog("Buddy")
+d.add_trick("roll over")
+print(e.tricks)
+```
+
+--- Input 14 ---
+try:
+    result = 10 / 0
+except ValueError:
+    print("Caught a value error!")
+
+--- Output 14 (Revisione) ---
+```python
+try:
+    result = 10 / 0
+except ValueError: # BUG: ALTA - L'eccezione `ZeroDivisionError` sollevata dalla divisione per zero non viene catturata da `ValueError`. L'eccezione non sarà gestita e il programma terminerà inaspettatamente.
+    print("Caught a value error!")
+```
+
+--- Input 15 ---
+a = 257
+b = 257
+if a is b:
+    print("a is b") # This might not print
+
+--- Output 15 (Revisione) ---
+```python
+a = 257
+b = 257
+if a is b: # BUG: MEDIA - L'operatore 'is' verifica l'identità dell'oggetto (stessa posizione in memoria), non l'uguaglianza del valore. Per interi al di fuori dell'intervallo di cache (tipicamente [-5, 256]), Python crea oggetti distinti per valori uguali. Quindi, 'a is b' sarà sempre False in questo caso. Si dovrebbe usare 'a == b' per confrontare i valori.
+    print("a is b") # This might not print
+```
+
+--- Input 16 ---
+with open('my_file.txt', 'w+') as f:
+    f.write('hello')
+    f.seek(0)
+    content = f.read()
+    f.write(content.upper())
+
+--- Output 16 (Revisione) ---
+```python
+with open('my_file.txt', 'w+') as f:
+    f.write('hello')
+    f.seek(0)
+    content = f.read()
+    # BUG: ALTA - La scrittura con 'f.write(content.upper())' appenderà il contenuto al file anziché sovrascriverlo.
+    # Dopo 'f.read()', il puntatore del file si trova alla fine del contenuto letto.
+    # Per sovrascrivere l'inizio del file, sarebbe necessario un ulteriore 'f.seek(0)' prima di questa operazione.
+    f.write(content.upper())
+```
+
+--- Input 17 ---
+my_list = [3, 1, 2]
+sorted_list = my_list.sort()
+print(sorted_list)
+
+--- Output 17 (Revisione) ---
+```python
+my_list = [3, 1, 2]
+sorted_list = my_list.sort() # BUG: ALTA - Il metodo `list.sort()` ordina la lista `my_list` in-place e restituisce `None`. Di conseguenza, la variabile `sorted_list` verrà assegnata a `None` invece che alla lista ordinata. Se si desidera una nuova lista ordinata senza modificare quella originale, utilizzare `sorted_list = sorted(my_list)`. Se si desidera la lista `my_list` modificata, non è necessario assegnare il risultato di `.sort()` a una variabile.
+print(sorted_list)
+```
+
+--- Input 18 ---
+x = 10
+def my_func():
+    x += 1
+    print(x)
+my_func()
+
+--- Output 18 (Revisione) ---
+```python
+x = 10
+def my_func():
+    x += 1 # BUG: CRITICA - Tentativo di modificare una variabile globale 'x' senza dichiararla come 'global' all'interno della funzione. Questo causerà un 'UnboundLocalError' perché Python la interpreta come una variabile locale non inizializzata prima dell'operazione di incremento (che è una lettura e poi una scrittura).
+    print(x)
+my_func()
+```
+
+--- Input 19 ---
+import re
+# Meant to match 'color' or 'colour'
+if re.match('colou?r', 'color'):
+    print("Match")
+
+--- Output 19 (Revisione) ---
+```python
+import re
+# Meant to match 'color' or 'colour'
+if re.match('colou?r', 'color'):
+    print("Match")
+```
+
+--- Input 20 ---
+my_dict = {'a': 1, 'b': 2, 'c': 3}
+# This is not guaranteed to be 'a', 'b', 'c' in Python < 3.7
+for key in my_dict:
+    print(key)
+
+--- Output 20 (Revisione) ---
+```python
+my_dict = {'a': 1, 'b': 2, 'c': 3}
+# This is not guaranteed to be 'a', 'b', 'c' in Python < 3.7
+for key in my_dict: # POTENTIAL_BUG: MEDIA - L'ordine di iterazione delle chiavi di un dizionario non è garantito in Python versioni < 3.7. Se l'applicazione si basa su un ordine specifico delle chiavi, il comportamento potrebbe essere non deterministico o inatteso su tali versioni. In Python 3.7 e successive, l'ordine di inserimento delle chiavi è garantito.
+    print(key)
+```
+
+--- Input 21 ---
+list1 = [1, 2, 3]
+list2 = list1
+list1.clear()
+print(list2)
+
+--- Output 21 (Revisione) ---
+```python
+list1 = [1, 2, 3]
+list2 = list1 # POTENTIAL_BUG: MEDIA - Questa riga crea una referenza condivisa all'oggetto lista originale, non una copia indipendente. Qualsiasi modifica successiva a 'list1' (o 'list2') influenzerà l'altra variabile, poiché entrambe puntano allo stesso oggetto in memoria. Se l'intenzione era creare una copia indipendente, il risultato ottenuto (`list2` sarà `[]`) è un errore logico. Per una copia superficiale, si dovrebbe usare `list2 = list1.copy()` o `list2 = list(list1)`.
+list1.clear()
+print(list2)
+```
+
+--- Input 22 ---
+for i in range(5):
+  if i == 3:
+    x = "found"
+print(x) # Raises NameError if the loop is empty or condition is never met
+
+--- Output 22 (Revisione) ---
+```python
+for i in range(5):
+  if i == 3:
+    x = "found"
+print(x) # POTENTIAL_BUG: ALTA - La variabile 'x' viene inizializzata solo condizionalmente all'interno del ciclo. Se la condizione 'i == 3' non dovesse mai essere soddisfatta (ad esempio, se 'range(5)' fosse 'range(0)' o 'range(1, 3)'), la variabile 'x' non verrebbe mai definita, causando un 'NameError' quando si tenta di stamparla.
+```
+
+--- Input 23 ---
+def countdown(n):
+  print(n)
+  countdown(n - 1)
+
+--- Output 23 (Revisione) ---
+```python
+def countdown(n):
+  print(n)
+  countdown(n - 1) # BUG: CRITICA - Mancanza di una condizione di terminazione (base case) per la ricorsione. Questo causerà una "RecursionError" per superamento della profondità massima di ricorsione, dato che la funzione si chiamerà all'infinito.
+```
+
+--- Input 24 ---
+class MyObject:
+    def __init__(self, value):
+        self.value = value
+obj1 = MyObject(1)
+obj2 = MyObject(1)
+if obj1 == obj2:
+    print("Objects are equal")
+
+--- Output 24 (Revisione) ---
+```python
+class MyObject:
+    def __init__(self, value):
+        self.value = value
+obj1 = MyObject(1)
+obj2 = MyObject(1)
+if obj1 == obj2: # BUG: ALTA - L'operatore di uguaglianza (==) per gli oggetti personalizzati confronta l'identità dell'oggetto (riferimento in memoria) per impostazione predefinita. Anche se obj1 e obj2 hanno lo stesso valore, sono istanze diverse e quindi non saranno considerate uguali da questo confronto. Per confrontare il valore degli attributi, è necessario sovrascrivere il metodo __eq__ nella classe MyObject.
+    print("Objects are equal")
+```
+
+--- Input 25 ---
+original = [[1], [2], [3]]
+copy = original[:]
+copy[0][0] = 99
+print(original)
+
+--- Output 25 (Revisione) ---
+```python
+original = [[1], [2], [3]]
+copy = original[:] # BUG: ALTA - L'operazione di slicing `[:]` crea una copia superficiale (shallow copy). Poiché gli elementi della lista `original` sono essi stessi oggetti mutabili (altre liste), la `copy` conterrà riferimenti agli stessi oggetti interni. La modifica di `copy[0][0]` muta l'oggetto lista `[1]` (che ora diventa `[99]`) che è referenziato sia da `original[0]` che da `copy[0]`. Questo porta a un'alterazione inaspettata della lista `original`. Per una copia completamente indipendente di strutture annidate mutabili, si dovrebbe usare `import copy; copy.deepcopy(original)`.
+copy[0][0] = 99
+print(original)
+```
+
+
+=== Categoria: Syntax Revision ===
+
+--- Input 26 ---
+def my_function()
+    print("Hello")
+
+--- Output 26 (Revisione) ---
+```python
+def my_function() # SYNTAX_ERROR: Missing colon after function definition
+    print("Hello")
+```
+
+--- Input 27 ---
+print("Hello"
+
+--- Output 27 (Revisione) ---
+```python
+print("Hello" # SYNTAX_ERROR: Parentesi di chiusura mancante per la chiamata alla funzione 'print'
+```
+
+--- Input 28 ---
+def my_function():
+print("Hello")
+
+--- Output 28 (Revisione) ---
+```python
+def my_function():
+    print("Hello") # SYNTAX_ERROR: IndentationError: expected an indented block
+```
+
+--- Input 29 ---
+class = "My Class"
+
+--- Output 29 (Revisione) ---
+```python
+class = "My Class"  # SYNTAX_ERROR: 'class' è una parola chiave riservata e non può essere usata come nome di variabile
+```
+
+--- Input 30 ---
+x + 1 = 5
+
+--- Output 30 (Revisione) ---
+```python
+x + 1 = 5 # SYNTAX_ERROR: La parte sinistra di un'assegnazione deve essere un obiettivo assegnabile (come una variabile o un attributo), non un'espressione.
+```
+
+--- Input 31 ---
+my_list = [1, 2 3]
+
+--- Output 31 (Revisione) ---
+```python
+my_list = [1, 2 3] # SYNTAX_ERROR: Elementi della lista non separati da virgola
+```
+
+--- Input 32 ---
+if x = 5:
+    print("x is 5")
+
+--- Output 32 (Revisione) ---
+```python
+if x = 5:  # SYNTAX_ERROR: L'operatore di assegnazione '=' non può essere usato in una condizione 'if'. Usa '==' per il confronto.
+    print("x is 5")
+```
+
+--- Input 33 ---
+whle True:
+    print("Looping")
+
+--- Output 33 (Revisione) ---
+```python
+whle True: # SYNTAX_ERROR: Keyword 'whle' non riconosciuta. La keyword corretta è 'while'.
+    print("Looping")
+```
+
+=== Categoria: Syntax Revision ===
+
+--- Input 48 ---
+x = 1
+def func():
+  nonlocal x
+  x = 2
+
+--- Output 48 (Revisione) ---
+```python
+x = 1
+def func():
+  nonlocal x # SYNTAX_ERROR: 'nonlocal' cannot bind to variables in the global scope. 'x' is a global variable.
+  x = 2
+```
+
+--- Input 49 ---
+async my_func():
+  pass
+
+--- Output 49 (Revisione) ---
+```python
+async my_func(): # SYNTAX_ERROR: Missing 'def' keyword after 'async' for function definition.
+  pass
+```
+
+--- Input 50 ---
+"hello" + "world"
+
+--- Output 50 (Revisione) ---
+"hello" + "world"
+
+
+=== Categoria: Doc Strings Add ===
+
+--- Input 51 ---
+def calculate_area(radius):
+    return 3.14 * radius ** 2
+
+--- Output 51 (Revisione) ---
+```python
+def calculate_area(radius):
+    """Calculate the area of a circle.
+
+    This function calculates the area of a circle using the formula
+    pi * radius^2. It uses a fixed approximation of pi (3.14).
+
+    Args:
+        radius (float or int): The radius of the circle.
+
+    Returns:
+        float: The calculated area of the circle.
+    """
+    # Uses an approximation for pi. For higher precision, consider using math.pi.
+    return 3.14 * radius ** 2
+```
+
+--- Input 52 ---
+class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def get_perimeter(self):
+        return 2 * (self.width + self.height)
+
+--- Output 52 (Revisione) ---
+```python
+class Rectangle:
+    """Represents a rectangle shape defined by its width and height."""
+
+    def __init__(self, width, height):
+        """Initializes a new Rectangle object.
+
+        Args:
+            width (float): The width of the rectangle. Must be a positive number.
+            height (float): The height of the rectangle. Must be a positive number.
+        """
+        self.width = width
+        self.height = height
+
+    def get_perimeter(self):
+        """Calculates and returns the perimeter of the rectangle.
+
+        The perimeter is calculated as 2 * (width + height).
+
+        Returns:
+            float: The perimeter of the rectangle.
+        """
+        # EXPLAIN: The perimeter of a rectangle is calculated by summing its width and height, then multiplying by 2.
+        return 2 * (self.width + self.height)
+```
+
+--- Input 53 ---
+def to_uppercase(input_string):
+    return input_string.upper()
+
+--- Output 53 (Revisione) ---
+```python
+def to_uppercase(input_string):
+    """Converte una stringa in maiuscolo.
+
+    Questa funzione prende una stringa in input e restituisce una nuova stringa
+    dove tutti i caratteri alfabetici sono convertiti in maiuscolo. I caratteri
+    non alfabetici (numeri, simboli, spazi) rimangono invariati.
+
+    Args:
+        input_string (str): La stringa da convertire in maiuscolo.
+
+    Returns:
+        str: La stringa convertita, con tutti i caratteri alfabetici in maiuscolo.
+
+    Raises:
+        AttributeError: Se `input_string` non è un oggetto di tipo stringa e,
+                        pertanto, non possiede il metodo `.upper()`.
+
+    Examples:
+        >>> to_uppercase("ciao mondo")
+        'CIAO MONDO'
+        >>> to_uppercase("Python è fantastico!")
+        'PYTHON È FANTASTICO!'
+        >>> to_uppercase("123abcXYZ")
+        '123ABCXYZ'
+        >>> to_uppercase("")
+        ''
+    """
+    return input_string.upper()
+```
+
+--- Input 54 ---
+def find_max(numbers):
+    max_val = numbers[0]
+    for num in numbers:
+        if num > max_val:
+            max_val = num
+    return max_val
+
+--- Output 54 (Revisione) ---
+```python
+def find_max(numbers):
+    """Finds the maximum value in a list of numbers.
+
+    This function iterates through the provided list of numbers, comparing each
+    element to a `max_val` variable that stores the largest number found so far.
+    It initializes `max_val` with the first element of the list and updates it
+    whenever a larger number is encountered.
+
+    Args:
+        numbers (list): A list of numerical values (integers or floats).
+                        The list must contain at least one element.
+
+    Returns:
+        int or float: The largest numerical value found in the list.
+
+    Raises:
+        IndexError: If the input `numbers` list is empty, as `numbers[0]` would
+                    attempt to access an out-of-bounds index.
+
+    Examples:
+        >>> find_max([1, 5, 2, 8, 3])
+        8
+        >>> find_max([-10, -2, -5])
+        -2
+        >>> find_max([7])
+        7
+        >>> find_max([3.14, 2.71, 1.618])
+        3.14
+    """
+    max_val = numbers[0]
+    for num in numbers:
+        if num > max_val:
+            max_val = num
+    return max_val
+```
+
+--- Input 55 ---
+def reverse_list(items):
+    return items[::-1]
+
+--- Output 55 (Revisione) ---
+```python
+def reverse_list(items):
+    """Reverses the order of elements in a list.
+
+    This function creates a new list with the elements of the input list
+    in reverse order. It does not modify the original list.
+
+    Args:
+        items (list): The list whose elements are to be reversed.
+
+    Returns:
+        list: A new list with the elements in reversed order.
+
+    Examples:
+        >>> reverse_list([1, 2, 3])
+        [3, 2, 1]
+        >>> reverse_list(['a', 'b', 'c'])
+        ['c', 'b', 'a']
+        >>> my_list = [10, 20, 30]
+        >>> reversed_my_list = reverse_list(my_list)
+        >>> reversed_my_list
+        [30, 20, 10]
+        >>> my_list # Original list remains unchanged
+        [10, 20, 30]
+    """
+    # EXPLAIN: Utilizza lo slicing di lista [::-1] per creare una copia inversa della lista.
+    # Questo è un modo conciso e Pythonic per invertire una sequenza,
+    # creando una nuova lista senza modificare l'originale.
+    return items[::-1]
+```
+
+--- Input 56 ---
+import os
+
+def list_files_in_directory(path):
+    return os.listdir(path)
+
+--- Output 56 (Revisione) ---
+```python
+import os
+
+def list_files_in_directory(path):
+    """Lists all entries (files and directories) within a specified directory path.
+
+    This function uses `os.listdir` to retrieve the names of all the files
+    and subdirectories in the given path.
+
+    Args:
+        path (str): The path to the directory whose contents are to be listed.
+
+    Returns:
+        list: A list of strings, where each string is the name of an entry
+              (file or sub-directory) found within the specified path.
+
+    Raises:
+        FileNotFoundError: If the specified `path` does not exist.
+        NotADirectoryError: If the specified `path` exists but is not a directory.
+        PermissionError: If the user does not have the necessary permissions to
+                         access the directory.
+
+    Examples:
+        >>> # Assuming 'my_test_dir' exists with 'file1.txt' and 'subdir/'
+        >>> # import os
+        >>> # os.mkdir('my_test_dir')
+        >>> # with open('my_test_dir/file1.txt', 'w') as f: pass
+        >>> # os.mkdir('my_test_dir/subdir')
+        >>> # sorted(list_files_in_directory('my_test_dir'))
+        >>> # ['file1.txt', 'subdir']
+    """
+    # EXPLAIN: os.listdir() returns a list containing the names of the entries
+    # in the directory given by path. The list is in arbitrary order.
+    return os.listdir(path)
+```
+
+--- Input 57 ---
+def is_palindrome(s):
+    return s == s[::-1]
+
+--- Output 57 (Revisione) ---
+```python
+def is_palindrome(s):
+    """Checks if a given string is a palindrome.
+
+    A palindrome is a word, phrase, number, or other sequence of characters
+    which reads the same backward as forward. This function performs a
+    case-sensitive check.
+
+    Args:
+        s (str): The string to check for palindrome property.
+
+    Returns:
+        bool: True if the string is a palindrome, False otherwise.
+    """
+    # EXPLAIN: Compares the original string with its reversed version.
+    # The slice `[::-1]` creates a reversed copy of the string.
+    return s == s[::-1]
+```
+
+--- Input 58 ---
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    def greet(self):
+        print(f"Hello, my name is {self.name}")
+
+--- Output 58 (Revisione) ---
+```python
+class Person:
+    """Represents a person with a name and an age.
+    """
+    def __init__(self, name, age):
+        """Initializes a new Person object.
+
+        Args:
+            name (str): The name of the person.
+            age (int): The age of the person.
+        """
+        self.name = name
+        self.age = age
+    def greet(self):
+        """Prints a greeting message including the person's name.
+
+        This method generates a personalized greeting string and prints it to
+        the standard output.
+
+        Returns:
+            None: This method performs an action (printing) but does not return any value.
+        """
+        print(f"Hello, my name is {self.name}")
+```
+
+--- Input 59 ---
+def fibonacci(n):
+    a, b = 0, 1
+    while a < n:
+        print(a, end=' ')
+        a, b = b, a+b
+    print()
+
+--- Output 59 (Revisione) ---
+```python
+def fibonacci(n):
+    """Prints the Fibonacci series up to a given number.
+
+    This function generates and prints Fibonacci numbers starting from 0,
+    until the current number exceeds or equals the specified limit `n`.
+    Each number is printed on the same line, separated by a space.
+
+    Args:
+        n (int): The upper limit for the Fibonacci numbers.
+                 The series will include numbers strictly less than `n`.
+
+    Returns:
+        None: This function prints the series to standard output and does not
+              return any value.
+
+    Example:
+        >>> fibonacci(10)
+        0 1 1 2 3 5 8 
+    """
+    a, b = 0, 1
+    while a < n:
+        print(a, end=' ')
+        a, b = b, a+b
+    print()
+```
+
+--- Input 60 ---
+def get_even_numbers(input_list):
+    return [num for num in input_list if num % 2 == 0]
+
+--- Output 60 (Revisione) ---
+```python
+def get_even_numbers(input_list):
+    """Filters a list to return only even numbers.
+
+    This function iterates through the provided list of numbers and
+    creates a new list containing only those numbers that are even.
+
+    Args:
+        input_list (list): A list of numbers (integers) to be filtered.
+
+    Returns:
+        list: A new list containing only the even numbers from the input list.
+              Returns an empty list if no even numbers are found or if the
+              input list is empty.
+    """
+    return [num for num in input_list if num % 2 == 0]
+```
+
+--- Input 61 ---
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+--- Output 61 (Revisione) ---
+```python
+def factorial(n):
+    """Calculates the factorial of a non-negative integer.
+
+    This function computes the factorial of a given non-negative integer `n`
+    using a recursive approach. The factorial of a non-negative integer `n`
+    is the product of all positive integers less than or equal to `n`.
+    The factorial of 0 is defined as 1.
+
+    It's important to note that this function assumes `n` is a non-negative integer.
+    Providing a negative integer will lead to an infinite recursion and eventually a
+    RecursionError. Providing a non-integer input may result in a TypeError or
+    RecursionError, as the multiplication and subtraction operations may not be
+    meaningful or may not terminate as expected.
+
+    Args:
+        n (int): The non-negative integer for which to calculate the factorial.
+
+    Returns:
+        int: The factorial of `n`.
+
+    Examples:
+        >>> factorial(0)
+        1
+        >>> factorial(1)
+        1
+        >>> factorial(5)
+        120
+    """
+    # EXPLAIN: This is the base case for the recursion. The factorial of 0 is defined as 1,
+    # which also provides a stopping point for the recursive calls.
+    if n == 0:
+        return 1
+    else:
+        # EXPLAIN: This is the recursive step. The factorial of any positive integer n
+        # is calculated as n multiplied by the factorial of (n-1). This call
+        # continues until the base case (n=0) is reached.
+        return n * factorial(n-1)
+```
+
+--- Input 62 ---
+def read_file_content(filepath):
+    with open(filepath, 'r') as f:
+        return f.read()
+
+--- Output 62 (Revisione) ---
+```python
+def read_file_content(filepath):
+    """Legge l'intero contenuto di un file specificato.
+
+    Questa funzione apre un file in modalità lettura ('r') e restituisce il suo
+    intero contenuto come una singola stringa. Utilizza l'istruzione 'with'
+    per garantire che il file venga chiuso correttamente dopo la lettura,
+    anche in caso di errori.
+
+    Args:
+        filepath (str): Il percorso (assoluto o relativo) al file da leggere.
+
+    Returns:
+        str: L'intero contenuto del file come stringa.
+
+    Raises:
+        FileNotFoundError: Se il file specificato da `filepath` non esiste.
+        IOError: Se si verifica un errore di input/output durante la lettura del file
+                 (ad esempio, permessi negati o il file non può essere aperto per altri motivi).
+    """
+    # EXPLAIN: L'istruzione 'with' garantisce che il file venga automaticamente chiuso
+    # EXPLAIN: una volta usciti dal blocco, anche in caso di eccezioni.
+    with open(filepath, 'r') as f:
+        return f.read()
+```
+
+--- Input 63 ---
+def merge_dicts(dict1, dict2):
+    res = {**dict1, **dict2}
+    return res
+
+--- Output 63 (Revisione) ---
+```python
+def merge_dicts(dict1, dict2):
+    """Merges two dictionaries into a new dictionary.
+
+    If there are common keys, values from `dict2` will override values from `dict1`.
+    This operation creates a new dictionary and does not modify the original dictionaries.
+
+    Args:
+        dict1 (dict): The first dictionary.
+        dict2 (dict): The second dictionary.
+
+    Returns:
+        dict: A new dictionary containing the merged key-value pairs.
+
+    Examples:
+        >>> d1 = {'a': 1, 'b': 2}
+        >>> d2 = {'b': 3, 'c': 4}
+        >>> merge_dicts(d1, d2)
+        {'a': 1, 'b': 3, 'c': 4}
+
+        >>> d3 = {'x': 10}
+        >>> d4 = {'y': 20}
+        >>> merge_dicts(d3, d4)
+        {'x': 10, 'y': 20}
+    """
+    # EXPLAIN: Uses dictionary unpacking (PEP 448) to create a new dictionary from the contents of dict1 and dict2.
+    # EXPLAIN: When duplicate keys are encountered, the value from the dictionary appearing later in the unpacking (dict2) overrides the value from the earlier one (dict1).
+    res = {**dict1, **dict2}
+    return res
+```
+
+--- Input 64 ---
+def square_root(number):
+    return number ** 0.5
+
+--- Output 64 (Revisione) ---
+```python
+def square_root(number):
+    """Calcola la radice quadrata di un numero.
+
+    Questa funzione prende un numero e restituisce la sua radice quadrata.
+
+    Args:
+        number (int or float): Il numero di cui calcolare la radice quadrata.
+                               Deve essere un valore non negativo.
+
+    Returns:
+        float: La radice quadrata del numero dato.
+
+    Raises:
+        ValueError: Se il numero fornito è negativo, poiché la radice quadrata
+                    di numeri negativi non è definita nel dominio dei numeri reali.
+                    (Nota: l'implementazione attuale non solleva esplicitamente
+                    ValueError per input negativi, ma restituirà un numero complesso
+                    o un NaN a seconda dell'ambiente Python. Per un uso comune
+                    della radice quadrata reale, è un punto da considerare
+                    nella documentazione).
+    
+    Examples:
+        >>> square_root(9)
+        3.0
+        >>> square_root(2)
+        1.4142135623730951
+        >>> square_root(0)
+        0.0
+    """
+    # EXPLAIN: L'operatore ** 0.5 è un modo conciso per calcolare la radice quadrata di un numero.
+    return number ** 0.5
+```
+
+--- Input 65 ---
+def is_prime(n):
+    if n <= 1:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+--- Output 65 (Revisione) ---
+```python
+def is_prime(n):
+    """Checks if a given integer is a prime number.
+
+    A prime number is a natural number greater than 1 that has no positive divisors
+    other than 1 and itself.
+
+    Args:
+        n (int): The integer to check for primality.
+
+    Returns:
+        bool: True if `n` is a prime number, False otherwise.
+    """
+    if n <= 1:
+        return False
+    # EXPLAIN: Optimized loop: We only need to check for divisors up to the square root of n.
+    # If n has a divisor greater than its square root, it must also have a divisor smaller than its square root.
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+```
+
+--- Input 66 ---
+def get_unique_elements(input_list):
+    return list(set(input_list))
+
+--- Output 66 (Revisione) ---
+```python
+def get_unique_elements(input_list):
+    """Get unique elements from a list.
+
+    This function takes an input list, converts it to a set to remove
+    duplicate elements, and then converts it back into a list. The order
+    of elements in the returned list is not guaranteed to be the same as
+    in the original input list, as sets are unordered.
+
+    Args:
+        input_list (list): The list from which to extract unique elements.
+
+    Returns:
+        list: A new list containing only the unique elements from `input_list`.
+    """
+    # EXPLAIN: Convert the list to a set to automatically remove duplicate elements.
+    # EXPLAIN: Convert the resulting set back to a list.
+    return list(set(input_list))
+```
+
+--- Input 67 ---
+class BankAccount:
+    def __init__(self, balance):
+        self.balance = balance
+    def deposit(self, amount):
+        self.balance += amount
+    def withdraw(self, amount):
+        self.balance -= amount
+
+--- Output 67 (Revisione) ---
+```python
+class BankAccount:
+    """Rappresenta un semplice conto bancario con funzionalità di deposito e prelievo.
+
+    Attributi:
+        balance (float): Il saldo attuale del conto.
+    """
+    def __init__(self, balance):
+        """Inizializza una nuova istanza di BankAccount con un saldo iniziale.
+
+        Args:
+            balance (float): Il saldo iniziale per il conto.
+        """
+        self.balance = balance
+
+    def deposit(self, amount):
+        """Deposita una quantità specificata di denaro nel conto.
+
+        Args:
+            amount (float): L'importo da depositare. Deve essere un numero positivo.
+        """
+        # EXPLAIN: Aggiunge l'importo depositato al saldo corrente del conto.
+        self.balance += amount
+
+    def withdraw(self, amount):
+        """Preleva una quantità specificata di denaro dal conto.
+
+        Args:
+            amount (float): L'importo da prelevare. Deve essere un numero positivo.
+        """
+        # EXPLAIN: Sottrae l'importo prelevato dal saldo corrente del conto.
+        # Questa implementazione non controlla se ci sono fondi sufficienti,
+        # permettendo al saldo di diventare negativo.
+        self.balance -= amount
+```
+
+--- Input 68 ---
+def count_vowels(s):
+    count = 0
+    vowels = "aeiou"
+    for char in s.lower():
+        if char in vowels:
+            count += 1
+    return count
+
+--- Output 68 (Revisione) ---
+```python
+def count_vowels(s):
+    """Counts the number of vowels in a string.
+
+    This function iterates through the input string, converts it to lowercase
+    to ensure case-insensitivity, and increments a counter for each character
+    that is identified as a vowel ('a', 'e', 'i', 'o', 'u').
+
+    Args:
+        s (str): The input string to be processed for vowel counting.
+
+    Returns:
+        int: The total number of vowels found in the string.
+
+    Examples:
+        >>> count_vowels("Hello World")
+        3
+        >>> count_vowels("Python")
+        1
+        >>> count_vowels("AEIOU")
+        5
+        >>> count_vowels("")
+        0
+    """
+    count = 0
+    vowels = "aeiou"
+    for char in s.lower():
+        if char in vowels:
+            count += 1
+    return count
+```
+
+--- Input 69 ---
+def sum_of_squares(numbers):
+    return sum(x**2 for x in numbers)
+
+--- Output 69 (Revisione) ---
+```python
+def sum_of_squares(numbers):
+    """Calcola la somma dei quadrati di una lista di numeri.
+
+    Args:
+        numbers (list[int | float]): Una lista di numeri interi o in virgola mobile.
+
+    Returns:
+        int | float: La somma dei quadrati di tutti i numeri nella lista.
+    """
+    return sum(x**2 for x in numbers)
+```
+
+--- Input 70 ---
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr
+
+--- Output 70 (Revisione) ---
+```python
+def bubble_sort(arr):
+    """Sorts a list using the Bubble Sort algorithm.
+
+    This function implements the Bubble Sort algorithm to sort the input list `arr`
+    in ascending order. It modifies the list in-place. The algorithm repeatedly
+    steps through the list, compares adjacent elements, and swaps them if they are
+    in the wrong order. The pass through the list is repeated until no swaps are
+    needed, which indicates that the list is sorted.
+
+    Args:
+        arr (list): The list of comparable elements to be sorted.
+
+    Returns:
+        list: The sorted list (same reference as the input `arr`).
+
+    Example:
+        >>> my_list = [64, 34, 25, 12, 22, 11, 90]
+        >>> bubble_sort(my_list)
+        [11, 12, 22, 25, 34, 64, 90]
+    """
+    n = len(arr)
+    # EXPLAIN: L'outer loop esegue n passaggi. In ogni passaggio, l'elemento più grande
+    # ancora non ordinato "sale" (bubble up) alla sua posizione corretta alla fine
+    # della sottolista non ordinata.
+    for i in range(n):
+        # EXPLAIN: L'inner loop attraversa la sottolista non ordinata. La dimensione della
+        # sottolista diminuisce di `i` ad ogni passaggio dell'outer loop, poiché gli
+        # ultimi `i` elementi sono già stati posizionati correttamente.
+        # `n-i-1` assicura che non si vada fuori dai limiti dell'array quando si accede a `arr[j+1]`.
+        for j in range(0, n - i - 1):
+            # EXPLAIN: Confronta gli elementi adiacenti. Se sono nell'ordine sbagliato,
+            # li scambia.
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+```
+
+--- Input 71 ---
+def find_index(lst, item):
+    for i, val in enumerate(lst):
+        if val == item:
+            return i
+    return -1
+
+--- Output 71 (Revisione) ---
+```python
+def find_index(lst, item):
+    """Finds the index of a specific item in a list.
+
+    Iterates through the list to find the first occurrence of the given item.
+    If the item is found, its zero-based index is returned.
+    If the item is not found in the list, -1 is returned.
+
+    Args:
+        lst (list): The list to search within.
+        item (Any): The item to search for. This can be of any type, as long as it's comparable
+                    with the elements in `lst`.
+
+    Returns:
+        int: The index of the item if found, otherwise -1.
+    """
+    # EXPLAIN: Iterate through the list using enumerate to get both index (i) and value (val).
+    for i, val in enumerate(lst):
+        # EXPLAIN: Check if the current value matches the item we are looking for.
+        if val == item:
+            # EXPLAIN: If a match is found, return its index immediately.
+            return i
+    # EXPLAIN: If the loop completes without finding the item, return -1 to indicate it was not found.
+    return -1
+```
+
+--- Input 72 ---
+def generate_random_string(length):
+    import random
+    import string
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(length))
+
+--- Output 72 (Revisione) ---
+```python
+def generate_random_string(length):
+    """Genera una stringa casuale di una lunghezza specificata.
+
+    La stringa generata è composta esclusivamente da lettere minuscole dell'alfabeto inglese.
+
+    Args:
+        length (int): La lunghezza desiderata della stringa casuale.
+
+    Returns:
+        str: Una stringa casuale della lunghezza specificata.
+    """
+    import random
+    import string
+    letters = string.ascii_lowercase
+    # EXPLAIN: Costruisce la stringa unendo caratteri casuali scelti dall'alfabeto minuscolo.
+    return ''.join(random.choice(letters) for i in range(length))
+```
+
+--- Input 73 ---
+def remove_duplicates(lst):
+    return list(dict.fromkeys(lst))
+
+--- Output 73 (Revisione) ---
+```python
+def remove_duplicates(lst):
+    """Remove duplicate elements from a list while preserving order.
+
+    This function efficiently removes duplicate elements from the input list
+    by leveraging the unique key property of dictionaries. It preserves the
+    original order of the elements, which is guaranteed for dictionary
+    insertion order since Python 3.7+.
+
+    Args:
+        lst (list): The input list from which to remove duplicate elements.
+
+    Returns:
+        list: A new list containing only the unique elements from the input list,
+              in their original order.
+
+    Examples:
+        >>> remove_duplicates([1, 2, 2, 3, 1, 4])
+        [1, 2, 3, 4]
+        >>> remove_duplicates(['a', 'b', 'a', 'c'])
+        ['a', 'b', 'c']
+        >>> remove_duplicates([])
+        []
+    """
+    # EXPLAIN: The dict.fromkeys(lst) method creates a dictionary using elements from 'lst' as keys.
+    # EXPLAIN: Dictionary keys must be unique, so this inherently removes duplicates.
+    # EXPLAIN: Since Python 3.7+, dictionary insertion order is guaranteed, preserving the original sequence of unique elements.
+    # EXPLAIN: list() then converts these unique dictionary keys back into a new list.
+    return list(dict.fromkeys(lst))
+```
+
+--- Input 74 ---
+def celsius_to_fahrenheit(celsius):
+    return (celsius * 9/5) + 32
+
+--- Output 74 (Revisione) ---
+```python
+def celsius_to_fahrenheit(celsius):
+    """Converts a temperature from Celsius to Fahrenheit.
+
+    Args:
+        celsius (float or int): The temperature in Celsius.
+
+    Returns:
+        float: The temperature converted to Fahrenheit.
+    """
+    return (celsius * 9/5) + 32
+```
+
+--- Input 75 ---
+def most_frequent(List):
+    return max(set(List), key = List.count)
+
+--- Output 75 (Revisione) ---
+```python
+def most_frequent(List):
+    """Finds the most frequent element in a list.
+
+    This function identifies the element that appears most frequently within
+    the provided list. It efficiently leverages Python's built-in `set` to
+    get unique elements and `max` with a custom `key` function to determine
+    the element with the highest count.
+
+    Args:
+        List (list): The input list from which to find the most frequent element.
+                     The list can contain elements of any hashable type.
+
+    Returns:
+        Any: The element that occurs most frequently in the list.
+             If multiple elements share the same highest frequency, the specific
+             element returned depends on the iteration order of the set, which
+             is generally not guaranteed (could be arbitrary among ties).
+
+    Raises:
+        ValueError: If the input `List` is empty, as `max()` cannot operate
+                    on an empty sequence of unique elements.
+
+    Examples:
+        >>> most_frequent([1, 3, 1, 3, 2, 1])
+        1
+        >>> most_frequent(['apple', 'banana', 'apple', 'orange', 'banana'])
+        'apple'
+        >>> most_frequent([])
+        Traceback (most recent call last):
+            ...
+        ValueError: max() arg is an empty sequence
+    """
+    # EXPLAIN: This line first creates a set of unique elements from the input list.
+    # Then, it uses the `max()` function to find the element within this set
+    # that has the highest frequency in the *original* list.
+    # The `key=List.count` argument tells `max()` to use the count of each element
+    # in the original `List` as the criterion for comparison.
+    return max(set(List), key = List.count)
+```
+
+
+=== Categoria: Style Suggestions ===
+
+--- Input 76 ---
+def my_func():
+  x = 1
+  y = 2
+
+--- Output 76 (Revisione) ---
+```python
+def my_func():
+  # PEP8: E111 - Indentation should be 4 spaces.
+  # STYLE: Consider using more descriptive variable names for clarity (e.g., 'count', 'value' instead of 'x', 'y').
+  x = 1
+  # PEP8: E111 - Indentation should be 4 spaces.
+  y = 2
+```
+
+--- Input 77 ---
+x = 1
+
+
+y = 2
+
+--- Output 77 (Revisione) ---
+```python
+x = 1
+# NAMING: Consider l'uso di nomi di variabile più descrittivi (es. 'valore_x', 'coordinata_x') a meno che 'x' non abbia un significato universale e ben compreso in questo contesto.
+
+# PEP8: E303 - Troppe righe vuote. Per istruzioni consecutive semplici, usa al massimo una riga vuota per la separazione, o nessuna se sono strettamente correlate.
+y = 2
+# NAMING: Consider l'uso di nomi di variabile più descrittivi (es. 'valore_y', 'coordinata_y') a meno che 'y' non abbia un significato universale e ben compreso in questo contesto.
+```
+
+--- Input 78 ---
+x=1+2
+
+--- Output 78 (Revisione) ---
+```python
+x=1+2 # PEP8: E225 - Missing whitespace around operator '='
+      # PEP8: E225 - Missing whitespace around operator '+'
+      # NAMING: Consider a more descriptive variable name than 'x' for clarity, unless its context (e.g., mathematical) makes it self-explanatory.
+```
+
+--- Input 79 ---
+my_list = [1,2,3]
+
+--- Output 79 (Revisione) ---
+```python
+my_list = [1,2,3] # PEP8: E231 - Missing whitespace after ',' for list elements. Consider `my_list = [1, 2, 3]` for improved readability.
+```
+
+--- Input 80 ---
+really_long_variable_name = "This is a very long string that will definitely exceed the 79-character limit recommended by PEP8."
+
+--- Output 80 (Revisione) ---
+```python
+really_long_variable_name = "This is a very long string that will definitely exceed the 79-character limit recommended by PEP8." # PEP8: E501 - Line too long (current length exceeds 79 characters). Consider breaking the string into multiple lines or using implicit line joining for better readability.
+# STYLE: Consider a more concise variable name if possible, while maintaining descriptiveness. Very long variable names can sometimes reduce readability.
+```
+
+--- Input 81 ---
+MY_VARIABLE = 10
+
+--- Output 81 (Revisione) ---
+MY_VARIABLE = 10
+
+--- Input 82 ---
+def MyFunction():
+    pass
+
+--- Output 82 (Revisione) ---
+```python
+def MyFunction():  # NAMING: I nomi delle funzioni (es. MyFunction) dovrebbero essere in snake_case (tutto minuscolo con underscore tra le parole), come suggerito da PEP8 N802.
+    pass
+```
+
+--- Input 83 ---
+class my_class:
+    pass
+
+--- Output 83 (Revisione) ---
+```python
+# PEP8: E113 - Unexpected indentation. Top-level code (like class definitions) should not be indented.
+                class my_class: # NAMING: Class names should use CapWords convention (e.g., MyClass).
+    pass
+```
+
+--- Input 84 ---
+x = 10
+import math
+
+--- Output 84 (Revisione) ---
+```python
+                x = 10 # PEP8: E402 - Imports should typically be at the top of the file, before other code.
+import math
+```
+
+--- Input 85 ---
+if (x > 5):
+    print("x is greater than 5")
+
+--- Output 85 (Revisione) ---
+```python
+                if (x > 5): # STYLE: Rimuovere le parentesi ridondanti dalla condizione 'if' per migliorare la leggibilità.
+                             # PEP8: E111/E114 - Indentazione inattesa per l'istruzione 'if'. Assicurati che l'indentazione sia coerente e corretta per il livello del blocco (dovrebbe essere un multiplo di 4 spazi).
+    print("x is greater than 5") # PEP8: E113 - Indentazione non coerente. Il corpo dell'istruzione 'if' ('print') deve essere indentato di 4 spazi rispetto all'istruzione 'if' (che inizia al col 9, 'print' al col 5). Attualmente, 'print' è dedentato rispetto a 'if'.
+```
+
+--- Input 86 ---
+#this is a comment
+x = 1
+
+--- Output 86 (Revisione) ---
+```python
+# PEP8: E262 - I commenti di blocco e in linea dovrebbero iniziare con uno spazio dopo il '#'.
+# STYLE: Considera l'uso di commenti più descrittivi che spieghino il "perché" o lo scopo del codice, piuttosto che solo il "cosa".
+#this is a comment
+# NAMING: Utilizza nomi descrittivi (es. 'valore', 'contatore', 'numero_elementi') invece di variabili a singola lettera, a meno che il loro significato non sia universalmente chiaro dal contesto (es. 'i' per indici di loop, 'x, y' per coordinate).
+x = 1
+```
+
+--- Input 87 ---
+s1 = 'hello'
+s2 = "world"
+
+--- Output 87 (Revisione) ---
+```python
+s1 = 'hello' # NAMING: I nomi di variabili `s1` e `s2` sono troppo generici. Per una maggiore leggibilità e manutenibilità, specialmente in un contesto più ampio, considera nomi più descrittivi (es. `first_word`, `second_word`, `greeting`).
+s2 = "world" # STYLE: Inconsistenza nell'uso delle virgolette. Sebbene Python accetti sia singole che doppie virgolette per le stringhe, PEP8 consiglia di scegliere una convenzione e mantenerla per coerenza all'interno di un file o progetto (es. usa sempre singole virgolette per le stringhe semplici: `s2 = 'world'`).
+```
+
+--- Input 88 ---
+x = 1 #This is an inline comment
+
+--- Output 88 (Revisione) ---
+```python
+# PEP8: E262 - Le commenti in linea dovrebbero essere separate da almeno due spazi dall'istruzione.
+# PEP8: E261 - Le commenti dovrebbero iniziare con uno spazio dopo '#'.
+# NAMING: Considera l'uso di un nome di variabile più descrittivo al posto di 'x' per una migliore leggibilità, a meno che il suo scopo non sia universalmente chiaro (ad esempio, in un contesto matematico).
+x = 1 #This is an inline comment
+```
+
+--- Input 89 ---
+def my_func():
+	print("Indented with a tab")
+
+--- Output 89 (Revisione) ---
+```python
+def my_func():
+	# PEP8: W191 - L'indentazione contiene tab. Le linee guida PEP8 raccomandano l'uso di 4 spazi per ogni livello di indentazione.
+	# STYLE: L'uso di tab per l'indentazione può causare problemi di visualizzazione e incoerenza su diversi editor o configurazioni. È fortemente raccomandato l'uso di 4 spazi per migliorare la leggibilità e la manutenibilità del codice.
+	print("Indented with a tab")
+```
+
+--- Input 90 ---
+if x > 0: print("positive")
+
+--- Output 90 (Revisione) ---
+```python
+if x > 0: print("positive")
+# PEP8: E201 - Spazio mancante dopo la parola chiave 'if'.
+# PEP8: E225 - Spazio mancante attorno all'operatore '>'.
+# STYLE: Per una migliore leggibilità, la clausola 'print' dovrebbe essere su una nuova riga e indentata. Le istruzioni composte su una singola riga (come 'if' con corpo sulla stessa riga) sono generalmente sconsigliate, anche per il codice breve.
+# NAMING: 'x' è un nome di variabile molto generico. Considera un nome più descrittivo se il contesto lo permette (es. 'value', 'number').
+```
+
+--- Input 91 ---
+from math import *
+
+--- Output 91 (Revisione) ---
+```python
+from math import * # STYLE: Evitare l'uso di import wildcard (import *). Rende il codice meno leggibile, oscura la provenienza degli oggetti e può causare conflitti di nomi. È preferibile importare solo gli elementi specifici necessari (es. `from math import sqrt, pi`) o l'intero modulo (es. `import math`).
+```
+
+--- Input 92 ---
+x = 1; y = 2
+
+--- Output 92 (Revisione) ---
+```python
+x = 1; y = 2 # PEP8: E703 - Evita più istruzioni sulla stessa riga separate da punto e virgola; usa righe separate per chiarezza.
+```
+
+--- Input 93 ---
+if x == None:
+  pass
+
+--- Output 93 (Revisione) ---
+```python
+if x == None:  # PEP8: E711 - La comparazione con None dovrebbe usare 'is' o 'is not'. Utilizza 'x is None'.
+  pass         # PEP8: E111 - L'indentazione dovrebbe essere di 4 spazi per blocco. Attualmente è di 2 spazi.
+```
+
+--- Input 94 ---
+my_bool = True
+if my_bool == True:
+  pass
+
+--- Output 94 (Revisione) ---
+```python
+my_bool = True
+if my_bool == True: # PEP8: E712 - Non confrontare un valore booleano con True o False direttamente. Usa il valore booleano stesso (es. `if my_bool:`).
+  pass # PEP8: E111/E114 - L'indentazione dovrebbe essere di 4 spazi, non 2.
+```
+
+--- Input 95 ---
+def my_func(arg1, arg2):
+  pass
+
+--- Output 95 (Revisione) ---
+```python
+def my_func(arg1, arg2):
+  pass # PEP8: E111 - L'indentazione deve essere di 4 spazi, non 2.
+```
+
+--- Input 96 ---
+my_dict = {'key':'value'}
+
+--- Output 96 (Revisione) ---
+```python
+my_dict = {'key':'value'} # PEP8: E231 - Missing whitespace after colon in dictionary literal.
+```
+
+--- Input 97 ---
+f = lambda x: 2 * x
+
+--- Output 97 (Revisione) ---
+```python
+f = lambda x: 2 * x  # PEP8: E731 - Non assegnare espressioni lambda a una variabile; usa un'istruzione 'def' al suo posto.
+                    # STYLE: L'uso di 'def' permette una migliore leggibilità, l'aggiunta di docstring e rende la funzione una cittadina di prima classe.
+                    # NAMING: Scegli un nome più descrittivo di 'f' per indicarne lo scopo, ad es. 'double_value' o 'multiply_by_two'.
+```
+
+--- Input 98 ---
+my_list[1 : 2]
+
+--- Output 98 (Revisione) ---
+```python
+my_list[1 : 2] # PEP8: E203 - Rimuovere gli spazi attorno all'operatore di slice ':' per conformità PEP8 e migliore leggibilità (es. `my_list[1:2]`).
+```
+
+--- Input 99 ---
+def function_with_many_arguments(arg1, arg2,
+  arg3, arg4):
+  pass
+
+--- Output 99 (Revisione) ---
+```python
+def function_with_many_arguments(arg1, arg2,
+  arg3, arg4): # PEP8: E121/E125 - Indentazione insufficiente per la riga di continuazione. Si prevedono 4 spazi o allineamento con la parentesi aperta.
+  pass # PEP8: E111 - L'indentazione del blocco di codice non è un multiplo di quattro. Si prevedono 4 spazi per il corpo della funzione.
+```
+
+--- Input 100 ---
+import os, sys
+
+--- Output 100 (Revisione) ---
+```python
+import os, sys # PEP8: E401 - Multi-import. Consider importare ogni modulo su una riga separata (e.g., `import os` e `import sys`).
+```
+
+

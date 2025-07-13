@@ -1,0 +1,1 @@
+my_lambda = lambda x: print(x)

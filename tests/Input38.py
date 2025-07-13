@@ -1,0 +1,1 @@
+my-variable = 10

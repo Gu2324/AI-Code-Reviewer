@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   ollama_server:
     image: ollama/ollama
@@ -9,12 +7,9 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     restart: unless-stopped
-    entrypoint: >
-      /bin/sh -c "
-      ollama serve &
-      sleep 3 &&
-      ollama pull codegemma &&
-      wait"
+    # L'entrypoint di ollama_server è stato semplificato per avviare solo il server Ollama.
+    # Il pull del modello sarà gestito dallo script init.sh nel flask_app.
+    entrypoint: ["ollama", "serve"]
   
   flask_app:
     build: .
@@ -23,9 +18,17 @@ services:
       - ollama_server
     ports:
       - "5000:5000"
-    env_file:
-      - .env
+
     restart: unless-stopped
+    # Monta la directory corrente dell'host in /app nel container.
+    # Questo è fondamentale per permettere a init.sh di creare il .env sul tuo host
+    # e per Flask di leggere il tuo codice.
+    volumes:
+      - .:/app
+    # Esegue lo script di inizializzazione come entrypoint.
+    # Questo script si occuperà di creare il .env se non esiste,
+    # di attendere Ollama e scaricare il modello, e poi di avviare l'app Flask.
+    entrypoint: ["python3", "init.py"]
 
 volumes:
   ollama_data:

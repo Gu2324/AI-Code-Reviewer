@@ -1,0 +1,1 @@
+print(f"Result is: {def my_func(): return 5}")

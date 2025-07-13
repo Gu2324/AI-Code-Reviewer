@@ -1,0 +1,1 @@
+really_long_variable_name = "This is a very long string that will definitely exceed the 79-character limit recommended by PEP8."

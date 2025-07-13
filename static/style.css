@@ -1,13 +1,9 @@
-/* -------------------------------
-   STILI GLOBALI E BODY
----------------------------------- */
 html, body {
   height: 100%;
   margin: 0;
   font-size: x-large;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: serif, 'Times New Roman', Times, serif;
   overflow-y: auto;
-  background-image: url(/static/images/black-grey.png);
 }
 
 html::before {
@@ -17,7 +13,7 @@ html::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("/static/images/black-grey.png");
+  background-image: url(/static/images/vivid-blurred-colorful-wallpaper-background.jpg);
   background-size: cover;
   background-position: center;
   z-index: -1;
@@ -33,7 +29,7 @@ body {
 }
 
 h1, label {
-  color: white;
+  color: black;
 }
 
 label {
@@ -41,9 +37,6 @@ label {
 }
 
 
-/* -------------------------------
-   CONTENITORI E LAYOUT
----------------------------------- */
 .code_container {
   display: flex;
   flex-wrap: wrap;
@@ -66,16 +59,12 @@ form {
   box-sizing: border-box;
 }
 
-
-/* -------------------------------
-   TEXTAREA E PRE / CODE
----------------------------------- */
 textarea,
 pre {
   position: relative;
   height: 760px;
   width: 100%;
-  font-size: x-large;
+  font-size: large;
   font-family: 'Courier New', Courier, monospace;
   resize: none;
   padding: 15px;
@@ -84,11 +73,12 @@ pre {
   border-radius: 32px;
   outline: none;
   color: white;
-  background-color: rgba(0, 0, 0, 0.479);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.8); 
+  border: 1px solid rgba(255, 255, 255, 0.2); 
   overflow-y: auto;
   overflow-x: hidden;
   margin: 0;
+  box-shadow: none;
 }
 
 pre {
@@ -110,9 +100,6 @@ pre > code {
 }
 
 
-/* -------------------------------
-   SCROLLBAR PERSONALIZZATE
----------------------------------- */
 textarea::-webkit-scrollbar,
 pre::-webkit-scrollbar {
   width: 12px;
@@ -130,9 +117,6 @@ pre::-webkit-scrollbar-thumb:hover {
 }
 
 
-/* -------------------------------
-   HIGHLIGHT.JS OVERRIDES
----------------------------------- */
 .hljs,
 code.hljs {
   background: transparent !important;
@@ -144,10 +128,6 @@ code.hljs {
   line-height: inherit !important;
 }
 
-
-/* -------------------------------
-   BOTTONI (INVIO / COPIA)
----------------------------------- */
 button {
   position: absolute;
   bottom: 20px;
@@ -183,21 +163,126 @@ button {
 
 button:hover {
   background-color: rgba(0, 0, 0, 0.45);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), inset 0 4px 20px rgba(255, 255, 255, 0.2);
+  /* Ombra rimossa */
+  box-shadow: none;
   transition: all 0.3s ease;
 }
 
 button:active {
   background-color: rgba(0, 0, 0, 0.3);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.1);
+  /* Ombra rimossa */
+  box-shadow: none;
   transform: translateY(1px);
 }
 
-/* -------------------------------
-   MACCHINA DA SCRIVERE
----------------------------------- */
-.typewriter-text {
-  white-space: pre-wrap;
-  overflow: hidden;
-  font-family: monospace;
+.header_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: transparent; 
+  border: none;
+  box-shadow: none; 
+  border-radius: 0 0 32px 32px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.5em;
+  text-shadow: none;
+  margin-left: 35%;
+  margin-right: 25%;
+}
+
+.settings_menu_wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  background-image: url("/static/images/arc_avenger_iron_man_marvel_movie_reactor_icon_183190.png");
+  background-size: contain;
+}
+
+.settings_icon {
+  position: static;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: transparent; 
+  border: none; 
+  color: white;
+  font-size: 1.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: none; 
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.settings_icon:hover {
+  background-color: rgba(0, 0, 0, 0.1); 
+  box-shadow: none; 
+}
+
+.review_mode_selection {
+  margin-bottom: 0;
+  color: white;
+  display: none; 
+  flex-direction: column;
+  gap: 10px;
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 15px);
+  transform: translateY(-50%);
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.8); 
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: none; 
+  min-width: 200px;
+  text-align: left;
+}
+
+.settings_menu_wrapper label {
+  color: white;
+}
+
+.review_mode_selection label {
+  margin-bottom: 0;
+  font-weight: normal;
+  font-size: 1.1em;
+}
+
+.review_type_select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.9); 
+  color: white;
+  font-size: medium;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2C114.1L146.2%2C0L5.4%2C114.1h281.6z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px;
+}
+
+.review_type_select:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: none;
+}
+
+.review_type_select option {
+  background-color: #333;
+  color: white;
 }
