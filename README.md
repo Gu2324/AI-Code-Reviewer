@@ -36,7 +36,7 @@ e sfruttando le potenzialità di isolamento di Docker, così da non interferire 
 2. Accedere alla cartella in locale:
    - `cd ai-code-reviewer`
 3. Crea un file `.env` nella cartella (IL NOME DEVE ESSERE `.env`)
-4. Imposta i valori del file `.env`:
+4. Imposta i valori del file `.env`: Ricorda di impostare una sola coppia di valori, commentando l'altra con '#' ad inizio riga.
     - OLLAMA_MODEL_NAME=codegemma
     - OLLAMA_API_BASE_URL=http://ollama_server:11434
     - GEMINI_API_KEY='Tua_chiave_API_di_Gemini'
@@ -78,3 +78,6 @@ e sfruttando le potenzialità di isolamento di Docker, così da non interferire 
 ### Errore Ollama: RAM insufficiente
 
 - Libera la RAM del tuo dispositivo e riavvia il container
+
+### Errore modelli: Sia gemini che Ollama sono configurati
+- Verifica che entrambe siano settate le tue variabili di ambiente con il comando 'env' su terminale. Poi 'unset "valori da non usare"'

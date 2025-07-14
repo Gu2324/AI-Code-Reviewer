@@ -1,5 +1,5 @@
 --- Risultati della Code Review LLM ---
-Tempo totale impiegato: 309.22 secondi
+Tempo totale impiegato: 419.22 secondi
 
 
 === Categoria: Bug Detection ===
@@ -440,7 +440,141 @@ whle True: # SYNTAX_ERROR: Keyword 'whle' non riconosciuta. La keyword corretta 
     print("Looping")
 ```
 
-=== Categoria: Syntax Revision ===
+
+--- Input 34 ---
+name = "World"
+print(f"Hello, {name)")
+
+--- Output 34 (Revisione) ---
+```python
+name = "World"
+print(f"Hello, {name)") # SYNTAX_ERROR: Parentesi tonda inattesa all'interno di un'espressione f-string. Ci si aspettava una parentesi graffa chiusa '}'
+```
+
+--- Input 35 ---
+def greet(name, message):
+    print(f"{message}, {name}!")
+
+greet(message="Hello", "World")
+
+--- Output 35 (Revisione) ---
+```python
+def greet(name, message):
+    print(f"{message}, {name}!")
+
+greet(message="Hello", "World") # SYNTAX_ERROR: Positional argument follows keyword argument. Positional arguments must precede keyword arguments in a function call.
+```
+
+--- Input 36 ---
+print("hello",)
+
+--- Output 36 (Revisione) ---
+```python
+print("hello",)
+```
+
+--- Input 37 ---
+else:
+    print("This will not work")
+
+--- Output 37 (Revisione) ---
+```python
+                else: # SYNTAX_ERROR: 'else' statement must be preceded by an 'if' or 'elif' statement. It cannot stand alone.
+    print("This will not work")
+```
+
+--- Input 38 ---
+my-variable = 10
+
+--- Output 38 (Revisione) ---
+```python
+my-variable = 10 # INVALID: I nomi delle variabili non possono contenere il carattere '-' (trattino). Il trattino è interpretato come operatore di sottrazione. I nomi delle variabili possono contenere lettere, numeri e underscore.
+```
+
+--- Input 39 ---
+print("Hello, world!)
+
+--- Output 39 (Revisione) ---
+```python
+print("Hello, world!) # SYNTAX_ERROR: La stringa non è chiusa correttamente. Manca la virgoletta di chiusura finale.
+```
+
+--- Input 40 ---
+my_lambda = lambda x: print(x)
+
+--- Output 40 (Revisione) ---
+```python
+my_lambda = lambda x: print(x)
+```
+
+--- Input 41 ---
+import math as
+
+--- Output 41 (Revisione) ---
+```python
+import math as # SYNTAX_ERROR: L'istruzione 'import ... as' richiede un nome per l'alias dopo 'as'
+```
+
+--- Input 42 ---
+print(f"Result is: {def my_func(): return 5}")
+
+--- Output 42 (Revisione) ---
+```python
+print(f"Result is: {def my_func(): return 5}") # SYNTAX_ERROR: Cannot embed a function definition statement directly inside an f-string expression; f-strings require expressions within curly braces.
+```
+
+--- Input 43 ---
+x = 10 if a = b else 20
+
+--- Output 43 (Revisione) ---
+```python
+x = 10 if a = b else 20 # SYNTAX_ERROR: Cannot use assignment operator (=) in a conditional expression; use equality operator (==) for comparison.
+```
+
+--- Input 44 ---
+def my_func():
+  break
+
+--- Output 44 (Revisione) ---
+```python
+def my_func():
+  break # SYNTAX_ERROR: La dichiarazione 'break' può essere usata solo all'interno di un ciclo (for o while)
+```
+
+--- Input 45 ---
+def my_func():
+  return 1
+  yield 2
+
+--- Output 45 (Revisione) ---
+```python
+def my_func():
+  return 1
+  yield 2
+```
+
+--- Input 46 ---
+my_dict = {'key': 'value']
+
+--- Output 46 (Revisione) ---
+```python
+my_dict = {'key': 'value'] # SYNTAX_ERROR: Parentesi graffa di chiusura mancante per il dizionario. Utilizzare '}' invece di ']'.
+```
+
+--- Input 47 ---
+try:
+  x = 1/0
+except ZeroDivisionError as e
+  print(e)
+
+--- Output 47 (Revisione) ---
+```python
+try:
+  x = 1/0
+except ZeroDivisionError as e # SYNTAX_ERROR: Missing colon at the end of the except clause
+  print(e)
+``` 
+
 
 --- Input 48 ---
 x = 1
